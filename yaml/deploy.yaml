@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mypodrestarter-controller
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mypodrestarter-controller
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mypodrestarter-controller
+    spec:
+      nodeName: vm-0-16-centos # 只调度到这个节点上
+      serviceAccountName: mypodrestarter-sa # 配置service account
+      containers:
+        - name: mypodrestarter
+          image: alpine:3.12
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: "Release"
+              value: "1"
+          workingDir: "/app"
+          command: ["./mypodrestarteroperator"]
+          volumeMounts:
+            - name: app
+              mountPath: /app
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: app
+          hostPath:
+            path: /root/mypodrestarteroperator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mypodrestarter-svc
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - port: 8888
+      nodePort: 31130
+  selector:
+    app: mypodrestarter-controller
+---
