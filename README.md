@@ -1,4 +1,4 @@
-## podrestart-operator pod原地升级原地重启operator
+## podDeployer-operator pod按照容器权重顺序启动operator
 ![]()
 ### 项目思路与设计
 设计背景：
@@ -6,4 +6,3 @@
 
 ### 项目功能
 
-# podDeployer-operator
