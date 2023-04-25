@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	podrestarterv1alpha1 "github.com/myoperator/poddeployer/pkg/apis/podDeployer/v1alpha1"
-	"github.com/myoperator/poddeployer/pkg/util"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/util/workqueue"
@@ -52,25 +51,18 @@ func (r *PodDeployerController) Reconcile(ctx context.Context, req reconcile.Req
 	}
 
 	if len(podDeployer.Spec.DeploymentSpec.Template.Spec.Containers) != 1 || len(podDeployer.Spec.PriorityImages) != 0 {
-		klog.Info("do patch image to pods...")
-		time.Sleep(time.Second * 30)
-		// 由deployment找到pods
-		pods := util.GetPodsByDeployment(podDeployer.Name, podDeployer.Namespace)
-		klog.Info(len(pods))
+		klog.Info("do patch image to deployment...")
 		klog.Info(SetOtherContainers)
 		// 执行patch操作
 		for _, container := range SetOtherContainers {
-			for _, pod := range pods {
-				wg.Add(1)
-				go patchContainer(&pod, &container)
-			}
+			time.Sleep(time.Second * 15)
+			patchDeployment(podDeployer.Name, podDeployer.Namespace, &container)
 		}
-		wg.Wait()
+
 	}
 
-
-
 	return reconcile.Result{}, nil
+
 }
 
 // InjectClient 使用controller-runtime 需要注入的client

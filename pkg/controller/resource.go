@@ -82,9 +82,7 @@ func mutateDeployment(podDeployer *podrestarterv1alpha1.Poddeployer, deployment 
 	deployment.Spec.Template.Labels["podDeployer"] = podDeployer.Name
 }
 
-
-
-
+// 为image排序
 func calculatePriorityImages(podDeployer *podrestarterv1alpha1.Poddeployer) []podrestarterv1alpha1.PriorityImage {
 	// 找出对应的
 	imageList := podDeployer.Spec.PriorityImages
@@ -95,6 +93,7 @@ func calculatePriorityImages(podDeployer *podrestarterv1alpha1.Poddeployer) []po
 	return imageList
 }
 
+// 替换image，并返回剩下排序后的images
 func handleDeploymentImageSort(priorityImages []podrestarterv1alpha1.PriorityImage, podDeployer *podrestarterv1alpha1.Poddeployer) ([]v1.Container, error){
 	if len(priorityImages) != len(podDeployer.Spec.DeploymentSpec.Template.Spec.Containers) {
 		return nil, errors.New("priorityImage len error")
@@ -122,15 +121,14 @@ type patchOperation struct {
 	Value interface{} `json:"value,omitempty"`
 }
 
+// patchDeployment 使用deployment patch的方式顺序执行pod
+func patchDeployment(deploymentName, namespace string, container *v1.Container) {
+	klog.Info("do deployment patch....")
 
-func patchContainer(pod *v1.Pod, container *v1.Container) {
-	klog.Info("do patch....")
-	defer wg.Done()
-	// FIXME: 这里有很大的问题，不能使用add 来原地升级pod。。。
-	pa := []patchOperation{}
+	pa := make([]patchOperation, 0)
 	p := patchOperation{
 		Op: "add",
-		Path: fmt.Sprintf("/spec/containers/-"),
+		Path: fmt.Sprintf("/spec/template/spec/containers/-"),
 		Value: container,
 	}
 	pa = append(pa, p)
@@ -139,9 +137,6 @@ func patchContainer(pod *v1.Pod, container *v1.Container) {
 		klog.Error(err)
 		return
 	}
-
-	//patch := fmt.Sprintf(`[{"op": "add", "path": "/spec/containers/-", "value": "%v"}]`, *container)
-	//patchBytes := []byte(patch)
 
 
 	jsonPatch, err := jsonpatch.DecodePatch(patchBytes)
@@ -154,13 +149,12 @@ func patchContainer(pod *v1.Pod, container *v1.Container) {
 		klog.Error("json Marshal error: ", err)
 		return
 	}
-	fmt.Println(string(jsonPatchBytes))
-	_, err = k8sconfig.ClientSet.CoreV1().Pods(pod.Namespace).
-		Patch(context.TODO(), pod.Name, types.JSONPatchType,
+	klog.Info(string(jsonPatchBytes))
+	_, err = k8sconfig.ClientSet.AppsV1().Deployments(namespace).
+		Patch(context.TODO(), deploymentName, types.JSONPatchType,
 			jsonPatchBytes, metav1.PatchOptions{})
 	if err != nil {
 		klog.Error("patch error: ", err)
 		return
 	}
-
 }

@@ -18,11 +18,23 @@ spec:
             image: nginx:1.14.2
             ports:
             - containerPort: 80
-  priority_images:
+          - name: example3
+            image: nginx:1.14.2
+            ports:
+            - containerPort: 81
+          - name: example4
+            image: nginx:1.18-alpine
+            ports:
+              - containerPort: 82
+  priority_images: # image的权重排序
     - image: example1
       value: 200
     - image: example2
       value: 50
+    - image: example3
+      value: 100
+    - image: example4
+      value: 1000
 
 
 
