@@ -6,7 +6,6 @@ import (
 	"log"
 )
 
-
 // InitClient 初始化k8s-client
 func InitClient(config *rest.Config) kubernetes.Interface {
 	c, err := kubernetes.NewForConfig(config)

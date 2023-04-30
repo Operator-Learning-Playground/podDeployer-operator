@@ -19,7 +19,6 @@ var wg = sync.WaitGroup{}
 
 type PodDeployerController struct {
 	client.Client
-
 }
 
 func NewPodDeployerController() *PodDeployerController {
@@ -66,7 +65,7 @@ func (r *PodDeployerController) Reconcile(ctx context.Context, req reconcile.Req
 }
 
 // InjectClient 使用controller-runtime 需要注入的client
-func(r *PodDeployerController) InjectClient(c client.Client) error {
+func (r *PodDeployerController) InjectClient(c client.Client) error {
 	r.Client = c
 	return nil
 }
@@ -82,4 +81,3 @@ func (r *PodDeployerController) DeploymentDeleteHandler(event event.DeleteEvent,
 		}
 	}
 }
-

@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	PodDeployerGroup = "api.practice.com"
-	PodDeployerVersion = "v1alpha1"
+	PodDeployerGroup      = "api.practice.com"
+	PodDeployerVersion    = "v1alpha1"
 	PodDeployerApiVersion = "api.practice.com/v1alpha1"
-	PodDeployerKind = "Poddeployer"
+	PodDeployerKind       = "Poddeployer"
 )
+
 // SchemeGroupVersion is group version used to register these objects
 var SchemeGroupVersion = schema.GroupVersion{Group: PodDeployerGroup, Version: PodDeployerVersion}
 

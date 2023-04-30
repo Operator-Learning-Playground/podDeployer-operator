@@ -17,17 +17,15 @@ type Poddeployer struct {
 	Spec PodDeployerSpec `json:"spec,omitempty"`
 }
 
-
 type PodDeployerSpec struct {
-	DeploymentSpec  appsv1.DeploymentSpec	`json:"deployment_spec"`
-	PriorityImages  []PriorityImage			`json:"priority_images,omitempty"`
+	DeploymentSpec appsv1.DeploymentSpec `json:"deployment_spec"`
+	PriorityImages []PriorityImage       `json:"priority_images,omitempty"`
 }
 
 type PriorityImage struct {
-	Image   	string	`json:"image"`
-	Value       int		`json:"value"`
+	Image string `json:"image"`
+	Value int    `json:"value"`
 }
-
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
@@ -39,5 +37,3 @@ type PoddeployerList struct {
 
 	Items []Poddeployer `json:"items"`
 }
-
-

@@ -69,4 +69,3 @@ func getRsIdsByDeployment(dep *appv1.Deployment, clientSet kubernetes.Interface)
 	}
 	return ret
 }
-

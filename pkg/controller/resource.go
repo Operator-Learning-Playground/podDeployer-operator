@@ -68,7 +68,6 @@ func (r *PodDeployerController) handleDeployment(ctx context.Context, podDeploye
 	return nil
 }
 
-
 func mutateDeployment(podDeployer *podrestarterv1alpha1.Poddeployer, deployment *appsv1.Deployment) {
 	deployment.Spec = podDeployer.Spec.DeploymentSpec
 	labels := map[string]string{
@@ -94,7 +93,7 @@ func calculatePriorityImages(podDeployer *podrestarterv1alpha1.Poddeployer) []po
 }
 
 // 替换image，并返回剩下排序后的images
-func handleDeploymentImageSort(priorityImages []podrestarterv1alpha1.PriorityImage, podDeployer *podrestarterv1alpha1.Poddeployer) ([]v1.Container, error){
+func handleDeploymentImageSort(priorityImages []podrestarterv1alpha1.PriorityImage, podDeployer *podrestarterv1alpha1.Poddeployer) ([]v1.Container, error) {
 	if len(priorityImages) != len(podDeployer.Spec.DeploymentSpec.Template.Spec.Containers) {
 		return nil, errors.New("priorityImage len error")
 	}
@@ -127,8 +126,8 @@ func patchDeployment(deploymentName, namespace string, container *v1.Container) 
 
 	pa := make([]patchOperation, 0)
 	p := patchOperation{
-		Op: "add",
-		Path: fmt.Sprintf("/spec/template/spec/containers/-"),
+		Op:    "add",
+		Path:  fmt.Sprintf("/spec/template/spec/containers/-"),
 		Value: container,
 	}
 	pa = append(pa, p)
@@ -137,7 +136,6 @@ func patchDeployment(deploymentName, namespace string, container *v1.Container) 
 		klog.Error(err)
 		return
 	}
-
 
 	jsonPatch, err := jsonpatch.DecodePatch(patchBytes)
 	if err != nil {

@@ -25,14 +25,12 @@ import (
 	operator = crd + controller + webhook
 */
 
-
-
 func main() {
 
 	logf.SetLogger(zap.New())
 	// 1. 管理器初始化
 	mgr, err := manager.New(k8sconfig.K8sRestConfig(), manager.Options{
-		Logger:  logf.Log.WithName("poddeployer-operator"),
+		Logger: logf.Log.WithName("poddeployer-operator"),
 	})
 	if err != nil {
 		mgr.GetLogger().Error(err, "unable to set up manager")
@@ -46,7 +44,6 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	// 3. 控制器相关
 	podReStarterCtl := controller.NewPodDeployerController()
 
@@ -59,23 +56,18 @@ func main() {
 		).
 		Complete(podReStarterCtl)
 
-
 	errC := make(chan error)
 
 	// 4. 启动controller管理器
 	go func() {
 		klog.Info("controller start!! ")
 		if err = mgr.Start(signals.SetupSignalHandler()); err != nil {
-			errC <-err
+			errC <- err
 		}
 	}()
-
-
 
 	// 这里会阻塞
 	getError := <-errC
 	log.Println(getError.Error())
 
 }
-
-

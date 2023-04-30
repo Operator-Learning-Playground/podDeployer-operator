@@ -22,6 +22,3 @@ func main() {
 	fmt.Println(ex)
 
 }
-
-
-
