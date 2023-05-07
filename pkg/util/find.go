@@ -48,7 +48,6 @@ func getPodsByReplicaSet(rs appv1.ReplicaSet, clientSet kubernetes.Interface, ns
 		}
 	}
 	return ret
-
 }
 
 // getRsIdsByDeployment 根据传入的dep，获取到相关连的rs列表(滚更后的ReplicaSet就没用了)

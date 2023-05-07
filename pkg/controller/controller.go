@@ -35,18 +35,18 @@ func (r *PodDeployerController) Reconcile(ctx context.Context, req reconcile.Req
 
 	err := r.Get(ctx, req.NamespacedName, podDeployer)
 	if err != nil {
-		klog.Error("get err: ", err)
 		if client.IgnoreNotFound(err) != nil {
-			return reconcile.Result{}, nil
+			klog.Error("get err: ", err)
+			return reconcile.Result{}, err
 		}
-		return reconcile.Result{Requeue: true}, err
+		return reconcile.Result{Requeue: true}, nil
 	}
 	klog.Info(podDeployer)
 
 	err = r.handleDeployment(ctx, podDeployer, deployment)
 	if err != nil {
 		klog.Error("handler deployment err: ", err)
-		return reconcile.Result{}, nil
+		return reconcile.Result{}, err
 	}
 
 	if len(podDeployer.Spec.DeploymentSpec.Template.Spec.Containers) != 1 || len(podDeployer.Spec.PriorityImages) != 0 {
@@ -57,7 +57,6 @@ func (r *PodDeployerController) Reconcile(ctx context.Context, req reconcile.Req
 			time.Sleep(time.Second * 15)
 			patchDeployment(podDeployer.Name, podDeployer.Namespace, &container)
 		}
-
 	}
 
 	return reconcile.Result{}, nil
