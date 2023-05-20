@@ -25,7 +25,6 @@ func K8sRestConfig() *rest.Config {
 	config.Insecure = true
 	klog.Info("run outside the cluster")
 	return config
-
 }
 
 // k8sRestConfigInPod 集群内部POD里使用

@@ -1,13 +1,14 @@
 package k8sconfig
 
 import (
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"log"
 )
 
-// InitClient 初始化k8s-client
-func InitClient(config *rest.Config) kubernetes.Interface {
+// initClient 初始化 k8s-client
+func initClient(config *rest.Config) kubernetes.Interface {
 	c, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		log.Fatal(err)
@@ -15,8 +16,22 @@ func InitClient(config *rest.Config) kubernetes.Interface {
 	return c
 }
 
-var ClientSet kubernetes.Interface
+// initDynamicClient 初始化 k8s-dynamic-client
+func initDynamicClient(config *rest.Config) dynamic.Interface {
+	c, err := dynamic.NewForConfig(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return c
+}
+
+var (
+	ClientSet     kubernetes.Interface
+	DynamicClient dynamic.Interface
+)
 
 func init() {
-	ClientSet = InitClient(K8sRestConfig())
+	ClientSet = initClient(K8sRestConfig())
+	DynamicClient = initDynamicClient(K8sRestConfig())
 }

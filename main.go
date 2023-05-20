@@ -5,6 +5,7 @@ import (
 	"github.com/myoperator/poddeployer/pkg/controller"
 	"github.com/myoperator/poddeployer/pkg/k8sconfig"
 	v1 "k8s.io/api/apps/v1"
+	v12 "k8s.io/api/core/v1"
 	_ "k8s.io/code-generator"
 	"k8s.io/klog/v2"
 	"log"
@@ -32,7 +33,7 @@ func main() {
 	var d time.Duration = 0
 	// 1. 管理器初始化
 	mgr, err := manager.New(k8sconfig.K8sRestConfig(), manager.Options{
-		Logger: logf.Log.WithName("poddeployer-operator"),
+		Logger:     logf.Log.WithName("poddeployer-operator"),
 		SyncPeriod: &d, // resync不设置触发
 	})
 	if err != nil {
@@ -48,7 +49,7 @@ func main() {
 	}
 
 	// 3. 控制器相关
-	podReStarterCtl := controller.NewPodDeployerController()
+	podReStarterCtl := controller.NewPodDeployerController(k8sconfig.DynamicClient)
 
 	err = builder.ControllerManagedBy(mgr).
 		For(&podrestarterv1alpha1.Poddeployer{}).
@@ -56,8 +57,11 @@ func main() {
 			handler.Funcs{
 				DeleteFunc: podReStarterCtl.DeploymentDeleteHandler,
 			},
-		).
-		Complete(podReStarterCtl)
+		).Watches(&source.Kind{Type: &v12.Pod{}},
+		handler.Funcs{
+			DeleteFunc: podReStarterCtl.PodDeleteHandler,
+		},
+	).Complete(podReStarterCtl)
 
 	errC := make(chan error)
 

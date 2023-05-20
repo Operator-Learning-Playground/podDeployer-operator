@@ -36,7 +36,7 @@ spec:
   type: NodePort
   ports:
     - port: 8888
-      nodePort: 31130
+      nodePort: 31131
   selector:
     app: mypoddeployer-controller
 ---

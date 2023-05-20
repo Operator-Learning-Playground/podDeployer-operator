@@ -18,8 +18,11 @@ type Poddeployer struct {
 }
 
 type PodDeployerSpec struct {
-	DeploymentSpec appsv1.DeploymentSpec `json:"deployment_spec"`
-	PriorityImages []PriorityImage       `json:"priority_images,omitempty"`
+	Type            string                 `json:"type"`
+	DaemonSetSpec   appsv1.DaemonSetSpec   `json:"daemonset_spec,omitempty"`
+	StatefulSetSpec appsv1.StatefulSetSpec `json:"statefulset_spec,omitempty"`
+	DeploymentSpec  appsv1.DeploymentSpec  `json:"deployment_spec,omitempty"`
+	PriorityImages  []PriorityImage        `json:"priority_images,omitempty"`
 }
 
 type PriorityImage struct {

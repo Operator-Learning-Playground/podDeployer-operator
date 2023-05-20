@@ -29,6 +29,8 @@ import (
 func (in *PodDeployerSpec) DeepCopyInto(out *PodDeployerSpec) {
 	*out = *in
 	in.DeploymentSpec.DeepCopyInto(&out.DeploymentSpec)
+	in.DaemonSetSpec.DeepCopyInto(&out.DaemonSetSpec)
+	in.StatefulSetSpec.DeepCopyInto(&out.StatefulSetSpec)
 	if in.PriorityImages != nil {
 		in, out := &in.PriorityImages, &out.PriorityImages
 		*out = make([]PriorityImage, len(*in))

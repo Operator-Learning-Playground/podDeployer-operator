@@ -39,10 +39,15 @@ rules:
       - apps
     resources:
       - deployments
+      - statefulsets
+      - daemonsets
     verbs:
       - get
       - list
       - watch
+      - patch
+      - create
+      - update
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -81,7 +86,7 @@ rules:
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer
+      - poddeployers
     verbs:
       - create
       - delete
@@ -93,13 +98,13 @@ rules:
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer/finalizers
+      - poddeployers/finalizers
     verbs:
       - update
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer/status
+      - poddeployers/status
     verbs:
       - get
       - patch
