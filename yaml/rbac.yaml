@@ -81,7 +81,7 @@ rules:
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer
+      - poddeployers
     verbs:
       - create
       - delete
@@ -93,13 +93,13 @@ rules:
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer/finalizers
+      - poddeployer/finalizers
     verbs:
       - update
   - apiGroups:
       - api.practice.com
     resources:
-      - podDeployer/status
+      - poddeployers/status
     verbs:
       - get
       - patch
